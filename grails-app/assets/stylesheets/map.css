@@ -1,0 +1,25 @@
+#mapContainer {
+    position: relative;
+    top: 10px;
+    left: 10px;
+    width: 660px;
+    height: 400px;
+}
+
+#map {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 660px;
+    height: 400px;
+    z-index: 100;
+}
+
+#svgMapOverlay {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 660px;
+    height: 400px;
+    z-index: 200;
+}
