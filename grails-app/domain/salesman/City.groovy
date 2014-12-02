@@ -1,7 +1,10 @@
 package salesman
 
 import com.javadocmd.simplelatlng.LatLng
+import groovy.transform.Canonical
+import groovy.transform.ToString
 
+@ToString
 class City {
     Integer id
     String name
@@ -15,4 +18,6 @@ class City {
 
     static constraints = {
     }
+
+
 }

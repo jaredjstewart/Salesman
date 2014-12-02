@@ -7,7 +7,8 @@
 </head>
 
 <body>
-${markerArray}
+
+<button type="button" onclick="drawCoords(${model.points}, ${model.breaks})">Draw paths!</button>
 <div id="mapContainer">
 
     <div id="svgMapOverlay"></div>
@@ -15,5 +16,10 @@ ${markerArray}
     <div id="map"></div>
 
 </div>
+<script type="text/javascript">
+$(document).ready( function() {
+ initializeMap();
+});
+</script>
 </body>
 </html>
