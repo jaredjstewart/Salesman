@@ -12,7 +12,9 @@
     </facet>
     <facet type="hibernate" name="Hibernate">
       <configuration>
-        <datasource-map />
+        <datasource-map>
+          <unit-entry name="Gorm" />
+        </datasource-map>
         <naming-strategy-map />
       </configuration>
     </facet>
@@ -34,6 +36,9 @@
     <content url="file://$MODULE_DIR$/target/work/plugins/database-migration-1.4.0">
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/database-migration-1.4.0/src/groovy" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/database-migration-1.4.0/grails-app/controllers" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/target/work/plugins/executor-0.3">
+      <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/executor-0.3/src/groovy" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/target/work/plugins/hibernate4-4.3.5.5">
       <sourceFolder url="file://$MODULE_DIR$/target/work/plugins/hibernate4-4.3.5.5/src/java" isTestSource="false" />
@@ -99,3 +104,4 @@
     </orderEntry>
   </component>
 </module>
+
