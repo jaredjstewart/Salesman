@@ -20,7 +20,8 @@ class MapController {
         def depot2 =  (points.subList(breaks[0],breaks[1]))
         def depot3 =  (points.subList(breaks[1], points.size()))
 
-        analysisJobService.create()
+
+
         analysisJobService.create()
 
 //    def points = [1,2,3,4]

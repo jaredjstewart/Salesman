@@ -1,3 +1,5 @@
+import salesman.MapController
+
 class UrlMappings {
 
 	static mappings = {
@@ -7,7 +9,7 @@ class UrlMappings {
             }
         }
 
-        "/"(view:"/index")
+        "/"(controller: 'map', action:"index")
         "500"(view:'/error')
 	}
 }

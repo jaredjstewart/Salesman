@@ -1,7 +1,5 @@
 package salesman
 
-import com.javadocmd.simplelatlng.LatLng
-import groovy.transform.Canonical
 import groovy.transform.ToString
 
 @ToString
@@ -10,14 +8,10 @@ class City {
     String name
     String state
 
-    LatLng latLng
-
-    public getLatLng() {
-        return [latLng.latitude, latLng.longitude]
-    }
+    double latitude
+    double longitude
 
     static constraints = {
     }
-
 
 }
