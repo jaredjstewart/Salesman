@@ -5,7 +5,8 @@ class MapController {
     def analysisJobService
 
     def updatePoints() {
-        def route = (0..50).toList()
+        def route = (0..48).toList()
+        Collections.shuffle(route)
         def breaks = [5, 10]
 
         render(contentType: "application/json") {
@@ -19,8 +20,6 @@ class MapController {
         }
         def breaks = [13, 20]
         def depot1 = (points.subList(0, breaks[0]))
-
-        println depot1
         def depot2 = (points.subList(breaks[0], breaks[1]))
         def depot3 = (points.subList(breaks[1], points.size()))
 
