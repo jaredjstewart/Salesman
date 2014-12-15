@@ -411,7 +411,6 @@ function tester(salesman) {
     }
 }
 
-
 function drawCoords(paths, breaks) {
     console.log("hello")
     var map = $('#map').vectorMap('get', 'mapObject');
@@ -442,6 +441,14 @@ function drawPoints(points, map, draw) {
     }
 }
 
+function makeAjaxRequest() {
+    console.log("ajax");
+    $.getJSON( "map/updatePoints", function( data ) {
+        drawCoords(data.route, data.breaks)
+    });
+
+}
+
 function initializeMap() {
     var map = $('#map').vectorMap({
         map: 'us_aea_en',
@@ -455,16 +462,4 @@ function initializeMap() {
 
     var map = $('#map').vectorMap('get', 'mapObject');
     var draw = SVG('svgMapOverlay').size(660, 400);
-
-
-//let's do another!
-    var coords1 = map.latLngToPoint(markerArray[1].latLng[0], markerArray[1].latLng[1]);
-    var coords2 = map.latLngToPoint(markerArray[2].latLng[0], markerArray[2].latLng[1]);
-    draw
-        .path()
-        .attr({fill: 'none', stroke: '#c00', 'stroke-width': 2})
-        .M(coords1.x, coords1.y)
-        .L(coords2.x, coords2.y);
-
-
 } // end Jquery call
