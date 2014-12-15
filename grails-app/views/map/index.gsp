@@ -9,7 +9,7 @@
 <body>
 <button type="button" onclick="drawCoords(${model.points}, ${model.breaks})">Draw paths!</button>
 
-<button type="button" onclick="makeAjaxRequest()">Update paths!</button>
+<button type="button" onclick="makeAjaxRequest(${model.routeId})">Update paths!</button>
 
 
 <button type="button" onclick="drawCoords(${[]}, ${[]})">Reset</button>

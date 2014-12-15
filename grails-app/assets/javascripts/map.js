@@ -412,17 +412,12 @@ function tester(salesman) {
 }
 
 function drawCoords(paths, breaks) {
-    console.log("Route: " + paths)
     var map = $('#map').vectorMap('get', 'mapObject');
     $('#svgMapOverlay').empty()
     var draw = SVG('svgMapOverlay').size(660, 400);
     var depot1= paths.slice(0,breaks[0]);
     var depot2= paths.slice(breaks[0],breaks[1]);
     var depot3= paths.slice(breaks[1],paths.length);
-
-    console.log(depot1) ;
-    console.log(depot2) ;
-    console.log(depot3) ;
 
     drawPoints(depot1, map, draw);
     drawPoints(depot2, map, draw);
@@ -434,8 +429,6 @@ function drawPoints(points, map, draw) {
         var point1 = points[i];
         var point2 = (i < points.length - 1 ) ? points[i + 1] : points[0];
 
-        console.log("p1: " + point1);
-        console.log("p2: " + point2);
         var coords1 = map.latLngToPoint(markerArray[point1].latLng[0], markerArray[point1].latLng[1]);
         var coords2 = map.latLngToPoint(markerArray[point2].latLng[0], markerArray[point2].latLng[1]);
         draw
@@ -447,9 +440,8 @@ function drawPoints(points, map, draw) {
     }
 }
 
-function makeAjaxRequest() {
-    console.log("ajax");
-    $.getJSON( "map/updatePoints", function( data ) {
+function makeAjaxRequest(routeId) {
+    $.getJSON( "map/updatePoints",{routeId: routeId}, function( data ) {
         drawCoords(data.route, data.breaks)
     });
 }

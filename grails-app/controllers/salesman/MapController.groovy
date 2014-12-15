@@ -1,20 +1,26 @@
 package salesman
 
+
 class MapController {
 
     def analysisJobService
 
-    def updatePoints() {
-        def route = (0..48).toList()
-        Collections.shuffle(route)
-        def breaks = [5, 10]
+    def updatePoints(Integer routeId) {
+
+        println "******$routeId"
+        def route = Route.list().first()
+
+        println "Returning route: ${route.dump()}"
+        println "Breaks: ${route.breaks}"
 
         render(contentType: "application/json") {
-            [route:route, breaks:breaks]
+            [route:route.route, breaks:route.breaks]
         }
     }
 
     def index() {
+        def route = new Route(route: (0..20).toList(), breaks: [4,10], test: "intialString").save(flush: true)
+        SolveMTSPJob.triggerNow([id:route.id])
         def points = [49, 5, 31, 3, 43, 32, 4, 36, 46, 12, 25, 27, 40, 6, 38, 18, 29, 20, 45, 33, 37, 30, 8, 19, 7, 44, 26, 39, 10, 9, 1, 24, 17, 42, 35, 2, 41, 16, 14, 13, 23, 15, 28, 11, 22, 47, 21, 34, 48].collect {
             it - 1
         }
@@ -23,8 +29,7 @@ class MapController {
         def depot2 = (points.subList(breaks[0], breaks[1]))
         def depot3 = (points.subList(breaks[1], points.size()))
 
-//        analysisJobService.create()
-
+        println  "Found route: ${Route.get(route.id).dump()}"
 //    def points = [1,2,3,4]
 //        def csv = new File(/C:\Projects\MutipleDepotVehicleRoutingProblem\data\cities.csv/).text
 //
@@ -38,7 +43,7 @@ class MapController {
 
 //        cities*.save()
 //        def json = new JsonBuilder(cities)
-        [model: [points: points, breaks: breaks]]
+        [model: [points: points, breaks: breaks, routeId:route.id]]
     }
 
 }
