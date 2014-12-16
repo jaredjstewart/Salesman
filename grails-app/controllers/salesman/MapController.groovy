@@ -3,24 +3,27 @@ package salesman
 
 class MapController {
 
-    def analysisJobService
+    def mtspSolverService
 
     def updatePoints(Integer routeId) {
 
-        println "******$routeId"
-        def route = Route.list().first()
-
+//        println "******$routeId"
+        def route = mtspSolverService.route
+        def points = [49,5,31,3,43,32,4,36,46,12,25,27,40,6,38,18,29,20,45,33,37,30,8,19,7,44,26,39,10,9,1,24,17,42,35,2,41,16,14,13,23,15,28,11,22,47,21,34,48].collect {it - 1}
+        def breaks = [13,20]
         println "Returning route: ${route.dump()}"
         println "Breaks: ${route.breaks}"
+        println mtspSolverService.splitIntoRoutes(route.route, route.breaks)
 
         render(contentType: "application/json") {
-            [route:route.route, breaks:route.breaks]
+//            [route:route.route*.minus(1), breaks:route.breaks]
+            [route:points, breaks:breaks]
         }
     }
 
     def index() {
-        def route = new Route(route: (0..20).toList(), breaks: [4,10], test: "intialString").save(flush: true)
-        SolveMTSPJob.triggerNow([id:route.id])
+        def route = new Route(route: (0..20).toList(), breaks: [4,10]).save(flush: true)
+        SolveMTSPJob.triggerNow()
         def points = [49, 5, 31, 3, 43, 32, 4, 36, 46, 12, 25, 27, 40, 6, 38, 18, 29, 20, 45, 33, 37, 30, 8, 19, 7, 44, 26, 39, 10, 9, 1, 24, 17, 42, 35, 2, 41, 16, 14, 13, 23, 15, 28, 11, 22, 47, 21, 34, 48].collect {
             it - 1
         }

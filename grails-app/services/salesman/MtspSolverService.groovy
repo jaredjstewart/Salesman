@@ -3,16 +3,12 @@ package salesman
 import grails.transaction.Transactional
 import org.ejml.simple.SimpleMatrix
 
-//@Transactional
+@Transactional
 class MtspSolverService {
-    static scope = "singleton"
-    static transactional = false
     static {
         println "yo"
         SimpleMatrixMetaclassAdditions.apply()
     }
-
-
 
     SimpleMatrix dmat = SimpleMatrix.loadCSV(/C:\Projects\MultipleDepotVehicleRoutingProblem\ejmlData\distances.csv/);
     SimpleMatrix xy = SimpleMatrix.loadCSV(/C:\Projects\MultipleDepotVehicleRoutingProblem\ejmlData\CITIES_AS_MATRIX.csv/);
@@ -20,17 +16,18 @@ class MtspSolverService {
     private Integer nSalesman = 3
     private def minTour = 3
     private def popSize = 160
-    private def numIter = 10
+    private def numIter = 1000
     private def nBreaks
     private def cumProb
     private List<List<Integer>> popRoute = []
     private List<List<Integer>> popBreak = []
     private def random = new Random()
+    Route route
 
     void initializeParamsForBreakpointSelection() {
         nBreaks = nSalesman - 1
         def dof = n - minTour * nSalesman
-        def addTo = ones( dof + 1)
+        def addTo = ones(dof + 1)
         for (k in 2..nBreaks) {
             addTo = cumsumList(addTo)
         }
@@ -47,10 +44,12 @@ class MtspSolverService {
         }
     }
 
-    def solve( Long routeId) {
+    def solve() {
 
         initializeParamsForBreakpointSelection()
         initializeThePopulations()
+
+        route = new Route()
 
         def globalMin = Double.MAX_VALUE
         List<Double> totalDists
@@ -70,17 +69,12 @@ class MtspSolverService {
                 globalMin = minDist
                 optRoute = popRoute.get(totalDists.indexOf(minDist))
                 optBreak = popBreak.get(totalDists.indexOf(minDist))
-                Route route = Route.get(routeId)
+                println "Route ${route.dump()}"
                 route.route = optRoute
                 route.breaks = optBreak
-                println "About to save route: ${route.dump()}"
-                if (!route.save(flush: true)){
-                    println "Save failed due to errors: $route.errors"
-                }
-
                 println "new best route iteration=$i d= ${minDist} ${splitIntoRoutes(optRoute, optBreak)}"
-
             }
+
 
             //Genetic Algo Ops
             Collections.shuffle(randomOrder)
@@ -100,7 +94,7 @@ class MtspSolverService {
                 for (k in 0..7) { // Generate new solutions
                     tmpRoute = new ArrayList(bestOf8Route)
                     tmpBreak = new ArrayList(bestOf8Break)
-                    switch (k %4) {
+                    switch (k % 4) {
                     //case 0: //Keep route the same
                         case 1: //flip
                             tmpRoute = RouteMutations.flip(bestOf8Route, I, J)
@@ -115,12 +109,14 @@ class MtspSolverService {
                     if (k > 3) {
                         tmpBreak = rand_breaks() //Half the population of mutants gets new breaks
                     }
-                    popRoute[p] =  tmpRoute
+                    popRoute[p] = tmpRoute
                     popBreak[p] = tmpBreak
                 }
             }
 
         }
+
+        route.save()
 
         splitIntoRoutes(optRoute, optBreak)
     }
@@ -152,7 +148,7 @@ class MtspSolverService {
         return routeOfEachSalesmen.sum { aRoute -> computeDistanceOfSingleRoute(aRoute) }
     }
 
-    ArrayList<ArrayList<Integer>> splitIntoRoutes(List pRoute, List pBreak) {
+  static ArrayList<ArrayList<Integer>> splitIntoRoutes(List pRoute, List pBreak) {
         ArrayList<ArrayList<Integer>> rng = [] //Nested list, each member is a list representing a route
         rng << pRoute[0..<pBreak[0]]
         for (int p = 0; p < pBreak.size() - 1; p++) {
@@ -218,13 +214,13 @@ class MtspSolverService {
     }
 
     static List<Integer> ones(Integer n) {
-        (1..n).collect{
+        (1..n).collect {
             1
         }
     }
 
-    static List<Double> div (def list, def x) {
-        return list.collect {it / x}
+    static List<Double> div(def list, def x) {
+        return list.collect { it / x }
     }
 
 }

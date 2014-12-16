@@ -419,6 +419,9 @@ function drawCoords(paths, breaks) {
     var depot2= paths.slice(breaks[0],breaks[1]);
     var depot3= paths.slice(breaks[1],paths.length);
 
+    console.log("depot1 :" + depot1);
+    console.log("depot2 :" + depot2);
+    console.log("depot3 :" + depot3);
     drawPoints(depot1, map, draw);
     drawPoints(depot2, map, draw);
     drawPoints(depot3, map, draw);
@@ -442,7 +445,11 @@ function drawPoints(points, map, draw) {
 
 function makeAjaxRequest(routeId) {
     $.getJSON( "map/updatePoints",{routeId: routeId}, function( data ) {
-        drawCoords(data.route, data.breaks)
+        console.log("route" + data.route);
+        console.log("breaks" + data.breaks);
+        console.log()
+        drawCoords(data.route, data.breaks);
+
     });
 }
 
