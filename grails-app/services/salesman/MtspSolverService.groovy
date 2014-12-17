@@ -10,19 +10,20 @@ class MtspSolverService {
         SimpleMatrixMetaclassAdditions.apply()
     }
 
-    SimpleMatrix dmat = SimpleMatrix.loadCSV(/C:\Projects\MultipleDepotVehicleRoutingProblem\ejmlData\distances.csv/);
-    SimpleMatrix xy = SimpleMatrix.loadCSV(/C:\Projects\MultipleDepotVehicleRoutingProblem\ejmlData\CITIES_AS_MATRIX.csv/);
+    static  SimpleMatrix dmat = SimpleMatrix.loadCSV(/C:\Projects\MultipleDepotVehicleRoutingProblem\ejmlData\distances.csv/);
+    static SimpleMatrix xy = SimpleMatrix.loadCSV(/C:\Projects\MultipleDepotVehicleRoutingProblem\ejmlData\CITIES_AS_MATRIX.csv/);
     private def n = xy.numRows()
     private Integer nSalesman = 3
     private def minTour = 3
     private def popSize = 160
-    private def numIter = 1000
+    private def numIter = 10000
     private def nBreaks
     private def cumProb
     private List<List<Integer>> popRoute = []
     private List<List<Integer>> popBreak = []
     private def random = new Random()
-    Route route
+    def optRoute
+    def optBreak
 
     void initializeParamsForBreakpointSelection() {
         nBreaks = nSalesman - 1
@@ -42,6 +43,8 @@ class MtspSolverService {
             popRoute << randperm(n)
             popBreak << rand_breaks()
         }
+
+        println "done"
     }
 
     def solve() {
@@ -49,13 +52,10 @@ class MtspSolverService {
         initializeParamsForBreakpointSelection()
         initializeThePopulations()
 
-        route = new Route()
-
         def globalMin = Double.MAX_VALUE
         List<Double> totalDists
         double minDist
-        def optRoute
-        def optBreak
+
         def randomOrder = randperm(popSize)*.minus(1)
         def rtes, brks, dists
         List<Integer> tmpRoute = []
@@ -69,20 +69,17 @@ class MtspSolverService {
                 globalMin = minDist
                 optRoute = popRoute.get(totalDists.indexOf(minDist))
                 optBreak = popBreak.get(totalDists.indexOf(minDist))
-                println "Route ${route.dump()}"
-                route.route = optRoute
-                route.breaks = optBreak
                 println "new best route iteration=$i d= ${minDist} ${splitIntoRoutes(optRoute, optBreak)}"
             }
 
 
             //Genetic Algo Ops
             Collections.shuffle(randomOrder)
-            for (int p = 7; p < popSize; p += 8) {
-                def orderForThisGroup = randomOrder[(p - 7)..p]
+            for (int p = 0; p < popSize - 7; p += 8) {
+                def orderForThisGroup = randomOrder[p..(p+7)]
                 rtes = orderForThisGroup.collect { popRoute.get(it) }
                 brks = orderForThisGroup.collect { popBreak.get(it) }
-                dists = orderForThisGroup.collect { totalDists[p] }
+                dists = orderForThisGroup.collect { totalDists[it] }
                 def distToIgnore = dists.min()
                 int idxToIgnore = dists.indexOf(distToIgnore)
                 List<Integer> bestOf8Route = rtes[idxToIgnore]
@@ -97,27 +94,30 @@ class MtspSolverService {
                     switch (k % 4) {
                     //case 0: //Keep route the same
                         case 1: //flip
-                            tmpRoute = RouteMutations.flip(bestOf8Route, I, J)
+//                            println "flip"
+                            tmpRoute = RouteMutations.flip(tmpRoute, I, J)
                             break
                         case 2: //swap endpoints
-                            tmpRoute = RouteMutations.swap(bestOf8Route, I, J)
+//                            println "swap"
+                            tmpRoute = RouteMutations.swap(tmpRoute, I, J)
                             break
                         case 3: //push 1 left
-                            tmpRoute = RouteMutations.push(bestOf8Route, I, J)
+//                            println "push"
+                            tmpRoute = RouteMutations.push(tmpRoute, I, J)
                             break
                     }
                     if (k > 3) {
                         tmpBreak = rand_breaks() //Half the population of mutants gets new breaks
                     }
-                    popRoute[p] = tmpRoute
-                    popBreak[p] = tmpBreak
+                    popRoute[p+k] = tmpRoute
+                    popBreak[p+k] = tmpBreak
                 }
+                1+1
             }
 
         }
 
-        route.save()
-
+        println "Algorithm complete."
         splitIntoRoutes(optRoute, optBreak)
     }
 
@@ -132,7 +132,7 @@ class MtspSolverService {
     }
 
 
-    double computeDistanceOfSingleRoute(List<Integer> route) {
+    static double computeDistanceOfSingleRoute(List<Integer> route) {
         double d = 0
         d += dmat[route.last() - 1, route.first() - 1]
         for (int i = 0; i < route.size() - 1; i++) {
@@ -142,13 +142,13 @@ class MtspSolverService {
     }
 
 
-    double computeTotalDistanceOfRouteBreak(List pRoute, List pBreak) {
+    static double  computeTotalDistanceOfRouteBreak(List pRoute, List pBreak) {
         ArrayList<ArrayList<Integer>> routeOfEachSalesmen = splitIntoRoutes(pRoute, pBreak)
         double d = 0
         return routeOfEachSalesmen.sum { aRoute -> computeDistanceOfSingleRoute(aRoute) }
     }
 
-  static ArrayList<ArrayList<Integer>> splitIntoRoutes(List pRoute, List pBreak) {
+    static ArrayList<ArrayList<Integer>> splitIntoRoutes(List pRoute, List pBreak) {
         ArrayList<ArrayList<Integer>> rng = [] //Nested list, each member is a list representing a route
         rng << pRoute[0..<pBreak[0]]
         for (int p = 0; p < pBreak.size() - 1; p++) {
@@ -222,5 +222,6 @@ class MtspSolverService {
     static List<Double> div(def list, def x) {
         return list.collect { it / x }
     }
+
 
 }

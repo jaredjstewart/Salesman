@@ -8,16 +8,16 @@ class MapController {
     def updatePoints(Integer routeId) {
 
 //        println "******$routeId"
-        def route = mtspSolverService.route
-        def points = [49,5,31,3,43,32,4,36,46,12,25,27,40,6,38,18,29,20,45,33,37,30,8,19,7,44,26,39,10,9,1,24,17,42,35,2,41,16,14,13,23,15,28,11,22,47,21,34,48].collect {it - 1}
-        def breaks = [13,20]
-        println "Returning route: ${route.dump()}"
-        println "Breaks: ${route.breaks}"
-        println mtspSolverService.splitIntoRoutes(route.route, route.breaks)
+        def route = mtspSolverService.optRoute
+        def breaks = mtspSolverService.optBreak
+//        def route = [49,5,31,3,43,32,4,36,46,12,25,27,40,6,38,18,29,20,45,33,37,30,8,19,7,44,26,39,10,9,1,24,17,42,35,2,41,16,14,13,23,15,28,11,22,47,21,34,48]
+//        def breaks = [13,20]
+        println "Returning route: ${route}"
+        println "Breaks: ${breaks}"
 
         render(contentType: "application/json") {
 //            [route:route.route*.minus(1), breaks:route.breaks]
-            [route:points, breaks:breaks]
+            [route:route.collect({it-1}), breaks:breaks]
         }
     }
 
