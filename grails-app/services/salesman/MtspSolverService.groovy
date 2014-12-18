@@ -16,7 +16,7 @@ class MtspSolverService {
     private Integer nSalesman = 3
     private def minTour = 3
     private def popSize = 160
-    private def numIter = 10000
+    def numIter = 10000
     private def nBreaks
     private def cumProb
     private List<List<Integer>> popRoute = []
@@ -24,6 +24,8 @@ class MtspSolverService {
     private def random = new Random()
     def optRoute
     def optBreak
+    Double globalMin = 0
+    Integer currentIter = 0
 
     void initializeParamsForBreakpointSelection() {
         nBreaks = nSalesman - 1
@@ -52,7 +54,7 @@ class MtspSolverService {
         initializeParamsForBreakpointSelection()
         initializeThePopulations()
 
-        def globalMin = Double.MAX_VALUE
+         globalMin = Double.MAX_VALUE
         List<Double> totalDists
         double minDist
 
@@ -63,13 +65,16 @@ class MtspSolverService {
 
         for (i in (1..numIter)) {
             //Evaluating members of the population
+            currentIter = i
             totalDists = evaluateMembersOfPopulation()
             minDist = totalDists.min()
             if (minDist < globalMin) {
                 globalMin = minDist
                 optRoute = popRoute.get(totalDists.indexOf(minDist))
                 optBreak = popBreak.get(totalDists.indexOf(minDist))
-                println "new best route iteration=$i d= ${minDist} ${splitIntoRoutes(optRoute, optBreak)}"
+                println "new best route iteration=$i d= ${minDist} }"
+                println "Route: $optRoute"
+                println "Breaks: $optBreak"
             }
 
 

@@ -1,12 +1,11 @@
 package salesman
 
-import grails.transaction.Transactional
-import org.ejml.simple.SimpleMatrix
 
 
 class SolveMTSPJob {
 
     def mtspSolverService
+    def concurrent = false
 
     def execute(context) {
 //        def id = context.mergedJobDataMap.get('id')
