@@ -2,7 +2,7 @@ package salesman
 
 
 
-class SolveMTSPJob {
+class SolveMTSPJob  {
 
     def mtspSolverService
     def concurrent = false

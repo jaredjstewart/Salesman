@@ -470,7 +470,7 @@ function initializeMap() {
         zoomMax: 1,
         markers: markerArray,
         markerStyle: {
-            initial: {"r": 2}
+            initial: {"r": 1}
         }
     });
 

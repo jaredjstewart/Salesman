@@ -10,7 +10,9 @@
 </head>
 
 <body>
+
 <div class="container" style="width:690px;">
+    <h3 style="text-align:center;">Solve that salesman problem!</h3>
     <div class="row" style="padding-bottom: 20px">
         <div class="col-xs-12" style="margin-left: -10px;">
             <div id="mapContainer">
@@ -28,11 +30,11 @@
             </p>
             </div>
         <div class="col-xs-3" style="text-align: right;">
-            <p id="distance"></p>
+            <h4 id="distance"></h4>
 
         </div>
         <div class ="col-xs-3"  style="text-align: right;">
-            <p id ="iteration"></p>
+            <h4 id ="iteration"></h4>
         </div>
     </div>
 
