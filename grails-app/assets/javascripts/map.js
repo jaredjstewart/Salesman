@@ -415,19 +415,19 @@ function drawCoords(paths, breaks) {
     var map = $('#map').vectorMap('get', 'mapObject');
     $('#svgMapOverlay').empty()
     var draw = SVG('svgMapOverlay').size(660, 400);
-    var depot1= paths.slice(0,breaks[0]);
-    var depot2= paths.slice(breaks[0],breaks[1]);
-    var depot3= paths.slice(breaks[1],paths.length);
+    var depot1 = paths.slice(0, breaks[0]);
+    var depot2 = paths.slice(breaks[0], breaks[1]);
+    var depot3 = paths.slice(breaks[1], paths.length);
 
     console.log("depot1 :" + depot1);
     console.log("depot2 :" + depot2);
     console.log("depot3 :" + depot3);
-    drawPoints(depot1, map, draw);
-    drawPoints(depot2, map, draw);
-    drawPoints(depot3, map, draw);
+    drawPoints(depot1, map, draw, '#c00');
+    drawPoints(depot2, map, draw, '#c00');
+    drawPoints(depot3, map, draw, '#c00');
 }
 
-function drawPoints(points, map, draw) {
+function drawPoints(points, map, draw, color) {
     for (i = 0; i < points.length; i++) {
         var point1 = points[i];
         var point2 = (i < points.length - 1 ) ? points[i + 1] : points[0];
@@ -436,7 +436,7 @@ function drawPoints(points, map, draw) {
         var coords2 = map.latLngToPoint(markerArray[point2].latLng[0], markerArray[point2].latLng[1]);
         draw
             .path()
-            .attr({fill: 'none', stroke: '#c00', 'stroke-width': 2})
+            .attr({fill: 'none', stroke: color, 'stroke-width': 2})
             .M(coords1.x, coords1.y)
             .L(coords2.x, coords2.y);
 
@@ -444,7 +444,7 @@ function drawPoints(points, map, draw) {
 }
 
 function makeAjaxRequest(routeId) {
-    $.getJSON( "map/updatePoints",{routeId: routeId}, function( data ) {
+    $.getJSON("map/updatePoints", {routeId: routeId}, function (data) {
         console.log("route" + data.route);
         console.log("breaks" + data.breaks);
         console.log()
@@ -466,4 +466,9 @@ function initializeMap() {
 
     var map = $('#map').vectorMap('get', 'mapObject');
     var draw = SVG('svgMapOverlay').size(660, 400);
+}
+
+function pollForUpdates() {
+    makeAjaxRequest();
+    window.setTimeout(pollForUpdates, 2000);
 }

@@ -94,15 +94,12 @@ class MtspSolverService {
                     switch (k % 4) {
                     //case 0: //Keep route the same
                         case 1: //flip
-//                            println "flip"
                             tmpRoute = RouteMutations.flip(tmpRoute, I, J)
                             break
                         case 2: //swap endpoints
-//                            println "swap"
                             tmpRoute = RouteMutations.swap(tmpRoute, I, J)
                             break
                         case 3: //push 1 left
-//                            println "push"
                             tmpRoute = RouteMutations.push(tmpRoute, I, J)
                             break
                     }
