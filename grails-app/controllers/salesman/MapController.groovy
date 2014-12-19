@@ -8,8 +8,8 @@ class MapController {
     def updatePoints(Integer routeId) {
 
 //        println "******$routeId"
-        def route = mtspSolverService.optRoute
-        def breaks = mtspSolverService.optBreak
+        List<Integer> route = mtspSolverService.optRoute
+        List<Integer> breaks = mtspSolverService.optBreak
 
 //        def route = [49,5,31,3,43,32,4,36,46,12,25,27,40,6,38,18,29,20,45,33,37,30,8,19,7,44,26,39,10,9,1,24,17,42,35,2,41,16,14,13,23,15,28,11,22,47,21,34,48]
 //        def breaks = [13,20]
@@ -20,7 +20,12 @@ class MapController {
 
 
     def start() {
+        mtspSolverService.continueRunning = true
         SolveMTSPJob.triggerNow()
+    }
+
+    def stop() {
+        mtspSolverService.continueRunning = false
     }
     def index() {
         def points = [49, 5, 31, 3, 43, 32, 4, 36, 46, 12, 25, 27, 40, 6, 38, 18, 29, 20, 45, 33, 37, 30, 8, 19, 7, 44, 26, 39, 10, 9, 1, 24, 17, 42, 35, 2, 41, 16, 14, 13, 23, 15, 28, 11, 22, 47, 21, 34, 48].collect {

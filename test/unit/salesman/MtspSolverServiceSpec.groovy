@@ -17,8 +17,8 @@ class MtspSolverServiceSpec extends Specification {
 
     void "test something"() {
 
-        def pRoute= [5,6,9,1,4,2,8,10,3,7]
-        def pBreak = [3,7]
+        List<Integer> pRoute= [5,6,9,1,4,2,8,10,3,7]
+        List<Integer> pBreak = [3,7]
 
         when:
         def result = service.splitIntoRoutes(pRoute,pBreak)

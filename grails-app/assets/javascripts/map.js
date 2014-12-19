@@ -448,18 +448,20 @@ function makeAjaxRequest() {
         console.log("route" + data.route);
         console.log("breaks" + data.breaks);
         console.log()
-
-        $('#distance').text("Distance: " + data.distance)
-        $('#iteration').text("Iteration: " + data.iteration)
-        drawRouteWithBreaks(data.route, data.breaks);
+        if (continuePolling) {
+            $('#distance').text("Distance: " + data.distance)
+            $('#iteration').text("Iteration: " + data.iteration)
+            drawRouteWithBreaks(data.route, data.breaks);
+        }
 
     });
 }
 
 function start() {
-    $.getJSON("map/start",  function (data) {
+    $.getJSON("map/start", function (data) {
         console.log("Starting route...")
     });
+    continuePolling = true;
     pollForUpdates();
 }
 
@@ -479,14 +481,17 @@ function initializeMap() {
 }
 
 function pollForUpdates() {
-    makeAjaxRequest();
     if (continuePolling) {
+        makeAjaxRequest();
         window.setTimeout(pollForUpdates, 2000);
     }
 }
 
-function stopPolling() {
+function stop() {
     continuePolling = false;
+    $.getJSON("map/stop", function (data) {
+        console.log("Stopping route...")
+    });
 }
 
 var continuePolling = true;

@@ -12,7 +12,7 @@
 <body>
 
 <div class="container" style="width:690px;">
-    <h3 style="text-align:center;">Solve that salesman problem!</h3>
+    <h3 style="text-align:center;">Multiple Travelling Salesmen Solver</h3>
     <div class="row" style="padding-bottom: 20px">
         <div class="col-xs-12" style="margin-left: -10px;">
             <div id="mapContainer">
@@ -22,11 +22,11 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row"  style="vertical-align: top">
         <div class="col-xs-6">
             <p>
             <button type="button" class="btn btn-default" onclick="start()">Draw paths!</button>
-                <button type="button" class="btn btn-default" onclick="drawRouteWithBreaks(${[]}, ${[]})">Stop updating</button>
+                <button type="button" class="btn btn-default" onclick="stop()">Stop updating</button>
             </p>
             </div>
         <div class="col-xs-3" style="text-align: right;">
