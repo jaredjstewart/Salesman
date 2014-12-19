@@ -1,10 +1,13 @@
 package salesman
 
+import org.codehaus.groovy.grails.io.support.ClassPathResource
+import org.ejml.simple.SimpleMatrix
+
 //println(new MultipleTSPSolver().solve())
 
-def svc = new MtspSolverService()
+//def svc = new MtspSolverService()
+println Thread.currentThread().getContextClassLoader().getResource('distances.csv').path
 
-def results = (1..100).collect{ svc.rand_breaks()}
+ SimpleMatrix dmat = SimpleMatrix.loadCSV(Thread.currentThread().getContextClassLoader().getResource('distances.csv').path);
 
-println results*.first().min()
-println results*.last().max()
+ dmat.print()

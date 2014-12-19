@@ -10,13 +10,13 @@ class MtspSolverService {
         SimpleMatrixMetaclassAdditions.apply()
     }
 
-    static  SimpleMatrix dmat = SimpleMatrix.loadCSV(/C:\Projects\MultipleDepotVehicleRoutingProblem\ejmlData\distances.csv/);
-    static SimpleMatrix xy = SimpleMatrix.loadCSV(/C:\Projects\MultipleDepotVehicleRoutingProblem\ejmlData\CITIES_AS_MATRIX.csv/);
+    static SimpleMatrix dmat = SimpleMatrix.loadCSV(Thread.currentThread().getContextClassLoader().getResource('distances.csv').path)
+    static SimpleMatrix xy = SimpleMatrix.loadCSV(Thread.currentThread().getContextClassLoader().getResource('CITIES_AS_MATRIX.csv').path)
     private def n = xy.numRows()
     private Integer nSalesman = 3
     private def minTour = 3
     private def popSize = 160
-    def numIter = 10000
+    def numIter = 1000000
     private def nBreaks
     private def cumProb
     private List<List<Integer>> popRoute = []
@@ -26,6 +26,7 @@ class MtspSolverService {
     def optBreak
     Double globalMin = 0
     Integer currentIter = 0
+    def continueRunning = true
 
     void initializeParamsForBreakpointSelection() {
         nBreaks = nSalesman - 1
@@ -50,7 +51,6 @@ class MtspSolverService {
     }
 
     def solve() {
-
         initializeParamsForBreakpointSelection()
         initializeThePopulations()
 
@@ -72,15 +72,18 @@ class MtspSolverService {
                 globalMin = minDist
                 optRoute = popRoute.get(totalDists.indexOf(minDist))
                 optBreak = popBreak.get(totalDists.indexOf(minDist))
-                println "new best route iteration=$i d= ${minDist} }"
-                println "Route: $optRoute"
-                println "Breaks: $optBreak"
+//                println "new best route iteration=$i d= ${minDist} }"
+//                println "Route: $optRoute"
+//                println "Breaks: $optBreak"
             }
 
 
             //Genetic Algo Ops
             Collections.shuffle(randomOrder)
             for (int p = 0; p < popSize - 7; p += 8) {
+                if (!continueRunning) {
+                    return
+                }
                 def orderForThisGroup = randomOrder[p..(p+7)]
                 rtes = orderForThisGroup.collect { popRoute.get(it) }
                 brks = orderForThisGroup.collect { popBreak.get(it) }
