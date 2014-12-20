@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3b4ce4c4-7645-4f88-964f-9f1fe5fba581" name="Default" comment="CSV files are now loaded as resources">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/groovy/org/simple/BetterSimpleMatrix.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grails-app/controllers/salesman/MapController.groovy" afterPath="$PROJECT_DIR$/grails-app/controllers/salesman/MapController.groovy" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grails-app/services/salesman/MtspSolverService.groovy" afterPath="$PROJECT_DIR$/grails-app/services/salesman/MtspSolverService.groovy" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/unit/salesman/MtspSolverServiceSpec.groovy" afterPath="$PROJECT_DIR$/test/unit/salesman/MtspSolverServiceSpec.groovy" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Salesman.iml" afterPath="$PROJECT_DIR$/Salesman.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grails-app/views/map/index.gsp" afterPath="$PROJECT_DIR$/grails-app/views/map/index.gsp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/stacktrace.log" afterPath="$PROJECT_DIR$/target/stacktrace.log" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="3b4ce4c4-7645-4f88-964f-9f1fe5fba581" name="Default" comment="CSV files are now loaded as resources" />
     <ignored path="Salesman.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -73,11 +64,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MtspSolverService.groovy" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="MtspSolverService.groovy" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/grails-app/services/salesman/MtspSolverService.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="2625" max-vertical-offset="4182">
-              <caret line="163" column="31" selection-start-line="163" selection-start-column="31" selection-end-line="163" selection-end-column="31" />
+            <state vertical-scroll-proportion="-2.2460136" vertical-offset="1224" max-vertical-offset="4182">
+              <caret line="14" column="5" selection-start-line="14" selection-start-column="5" selection-end-line="14" selection-end-column="5" />
               <folding>
                 <element signature="e#18#60#0" expanded="true" />
               </folding>
@@ -95,10 +86,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MtspSolverServiceSpec.groovy" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="MtspSolverServiceSpec.groovy" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/unit/salesman/MtspSolverServiceSpec.groovy">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5740319" vertical-offset="122" max-vertical-offset="561">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
               <caret line="23" column="59" selection-start-line="23" selection-start-column="59" selection-end-line="23" selection-end-column="59" />
               <folding />
             </state>
@@ -764,7 +755,7 @@
       <workItem from="1419028795706" duration="1661000" />
       <workItem from="1419030931238" duration="599000" />
       <workItem from="1419033722567" duration="71000" />
-      <workItem from="1419039682764" duration="766000" />
+      <workItem from="1419039682764" duration="859000" />
     </task>
     <task id="LOCAL-00001" summary="playing around with Executor plugin">
       <created>1417573198448</created>
@@ -794,7 +785,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="67134000" />
+    <option name="totallyTimeSpent" value="67227000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -1273,21 +1264,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/grails-app/services/salesman/MtspSolverService.groovy">
+    <entry file="file://$PROJECT_DIR$/test/unit/salesman/MtspSolverServiceSpec.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2625" max-vertical-offset="4182">
-          <caret line="163" column="31" selection-start-line="163" selection-start-column="31" selection-end-line="163" selection-end-column="31" />
-          <folding>
-            <element signature="e#18#60#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="561">
+          <caret line="23" column="59" selection-start-line="23" selection-start-column="59" selection-end-line="23" selection-end-column="59" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/unit/salesman/MtspSolverServiceSpec.groovy">
+    <entry file="file://$PROJECT_DIR$/grails-app/services/salesman/MtspSolverService.groovy">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5740319" vertical-offset="122" max-vertical-offset="561">
-          <caret line="23" column="59" selection-start-line="23" selection-start-column="59" selection-end-line="23" selection-end-column="59" />
-          <folding />
+        <state vertical-scroll-proportion="-2.2460136" vertical-offset="1224" max-vertical-offset="4182">
+          <caret line="14" column="5" selection-start-line="14" selection-start-column="5" selection-end-line="14" selection-end-column="5" />
+          <folding>
+            <element signature="e#18#60#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
