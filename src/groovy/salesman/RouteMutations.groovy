@@ -1,27 +1,49 @@
 package salesman
 
-class RouteMutations {
-    static List<Integer> flip(List<Integer> route, int I, int J) {
-        List<Integer> front = (I > 0) ? route[0..<I] : []
-        List<Integer> middle = route[I..J]
-        List<Integer> end = (J + 1 < route.size()) ? route[(J + 1)..-1] : []
+import groovy.transform.CompileStatic
 
-        return front + middle.reverse() + end
+@CompileStatic
+class RouteMutations {
+    static int[] flipArray(int[] route, int I, int J) {
+
+        int[] ret = new int[route.length]
+
+        for (int i = 0; i < route.length; i++){
+            if (i < I) {
+                ret[i] = route[i]
+            } else if (i > J) {
+                ret [i] = route[i]
+            } else {
+                ret[i] = route[J - (i - I)]
+            }
+
+        }
+        return ret
     }
 
-    static List<Integer> swap(List<Integer> route, int I, int J) {
-        Collections.swap(route, I, J)
+    static int[] swapArray(int[] route, int I, int J) {
+        int tmp = route[I]
+        route[I] = route[J]
+        route[J] = tmp
 
         return route
     }
 
-    static List<Integer> push(List<Integer> route, int I, int J) {
-        List<Integer> front = (I > 0) ? route[0..<I] : []
-        List<Integer> middle = route[I..J]
-        List<Integer> end = (J + 1 < route.size()) ? route[(J + 1)..-1] : []
-        int x = middle.pop()
+    static int[] pushArray(int[] route, int I, int J) {
+        int[] ret = new int[route.length]
 
-        return front + x + middle + end
+        for (int i = 0; i < route.length; i++) {
+            if (i < I) {
+                ret[i] = route[i]
+            } else if (i > J) {
+                ret[i] = route[i]
+            } else if (i == I) {
+                ret[i] = route[J]
+            }else {
+                ret[i] = route[i - 1]
+            }
+        }
+        return ret
     }
 
 }

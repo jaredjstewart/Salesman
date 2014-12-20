@@ -23,14 +23,16 @@ class MtspSolverService {
     Integer numIter = 100000
     private Integer nBreaks
     List<Double> cumProb
+    BarebonesIntegerMatrix populationOfRoutes
+    BarebonesIntegerMatrix populationOfBreaks
     private List<List<Integer>> popRoute = []
     private List<List<Integer>> popBreak = []
     private Random random = new Random()
-    List<Integer> optRoute
-    List<Integer> optBreak
+    int[] optimalRoute
+    int[] optimalBreaks
     public Double globalMin = 0
     public Integer currentIter = 0
-    Boolean  continueRunning = true
+    Boolean continueRunning = true
 
     void initializeParamsForBreakpointSelection() {
         nBreaks = nSalesman - 1
@@ -51,6 +53,8 @@ class MtspSolverService {
             popBreak << rand_breaks()
         }
 
+        populationOfRoutes = new BarebonesIntegerMatrix(popSize, n, popRoute)
+        populationOfBreaks = new BarebonesIntegerMatrix(popSize, nBreaks, popBreak)
         println "done initializing population"
     }
 
@@ -60,24 +64,40 @@ class MtspSolverService {
         initializeThePopulations()
 
         globalMin = Double.MAX_VALUE
-        List<Double> totalDists
+        double[] totalDists
         Double minDist
+        Integer locationOfMinDist
 
-        List<Integer> randomOrder = (List<Integer>) randperm(popSize).collect { Integer it -> it - 1}
-        List<List<Integer>>  rtes, brks
-        List<Double> dists
-        List<Integer> tmpRoute = []
-        List<Integer> tmpBreak = []
+        List<Integer> randomOrder = (List<Integer>) randperm(popSize).collect { Integer it -> it - 1 }
+        int[] temporaryRoute = new int[n]
+        int[] temporaryBreak = new int[nBreaks]
+
+        BarebonesIntegerMatrix routesForThisGroup = new BarebonesIntegerMatrix(8, n)
+        BarebonesIntegerMatrix breaksForThisGroup = new BarebonesIntegerMatrix(8, 2)
+        double[] distances = new double[8]
 
         for (i in (1..numIter)) {
             //Evaluating members of the population
             currentIter = i
+
             totalDists = evaluateMembersOfPopulation()
-            minDist = totalDists.min()
+            minDist = null;
+            locationOfMinDist = null
+            for (int j = 0; j < totalDists.size(); j++) {
+                if (minDist == null || totalDists[j] < minDist) {
+                    minDist = totalDists[j]
+                    locationOfMinDist = j
+                }
+            }
+
             if (minDist < globalMin) {
                 globalMin = minDist
-                optRoute = popRoute.get(totalDists.indexOf(minDist))
-                optBreak = popBreak.get(totalDists.indexOf(minDist))
+
+                optimalRoute = populationOfRoutes.getRow(locationOfMinDist)
+                optimalBreaks = populationOfBreaks.getRow(locationOfMinDist)
+//                println "new best route iteration=$i d= ${minDist} }"
+//                println "Route: $optimalRoute"
+//                println "Breaks: $optimalBreaks"
             }
 
 
@@ -87,113 +107,153 @@ class MtspSolverService {
                 if (!continueRunning) {
                     return
                 }
-                List<Integer> orderForThisGroup =  (List<Integer>) randomOrder[p..(p+7)]
-                rtes = (List<List<Integer>>) orderForThisGroup.collect {Integer it -> popRoute.get(it) }
-                brks = (List<List<Integer>>) orderForThisGroup.collect {Integer it -> popBreak.get(it) }
-                dists = orderForThisGroup.collect { Integer it -> totalDists.get(it) }
-                Double distToIgnore = dists.min()
-                int idxToIgnore = dists.indexOf(distToIgnore)
-                List<Integer> bestOf8Route = rtes[idxToIgnore]
-                List<Integer> bestOf8Break = brks[idxToIgnore]
-                def routeInsertionPoints = (1..2).collect({ Math.floor(n * random.nextDouble()) }).sort()
-                def I = routeInsertionPoints[0] as Integer
-                def J = routeInsertionPoints[1] as Integer
+                List<Integer> orderForThisGroup = randomOrder[p..(p + 7)]
+
+                int l = 0;
+                for (int j : orderForThisGroup) {
+                    routesForThisGroup.setRow(l, populationOfRoutes.getRow(j));
+                    breaksForThisGroup.setRow(l, populationOfBreaks.getRow(j));
+                    distances[l] = totalDists[j]
+                    ++l
+                }
+
+                minDist = null;
+                locationOfMinDist = null
+                for (int j = 0; j < 8; j++) {
+                    if (minDist == null || distances[j] < minDist) {
+                        minDist = distances[j]
+                        locationOfMinDist = j
+                    }
+                }
+                int[] bestRouteOfThisGroup = routesForThisGroup.getRow(locationOfMinDist)
+                int[] bestBreakOfThisGroup = breaksForThisGroup.getRow(locationOfMinDist)
+                ///////////////////////////
+
+                def routeInsertionPoints = (1..2).collect({ random.nextInt(n) }).sort()
+                Integer I = routeInsertionPoints[0] as Integer
+                Integer J = routeInsertionPoints[1] as Integer
 
                 for (Integer k in 0..7) { // Generate new solutions
-                    tmpRoute = new ArrayList<Integer>(bestOf8Route)
-                    tmpBreak = new ArrayList<Integer>(bestOf8Break)
+                    System.arraycopy(bestRouteOfThisGroup, 0, temporaryRoute, 0, bestRouteOfThisGroup.length);
+                    System.arraycopy(bestBreakOfThisGroup, 0, temporaryBreak, 0, bestBreakOfThisGroup.length);
+
                     switch (k % 4) {
                     //case 0: //Keep route the same
                         case 1: //flip
-                            tmpRoute = RouteMutations.flip(tmpRoute, I, J)
+                            temporaryRoute = RouteMutations.flipArray(temporaryRoute, I, J)
                             break
                         case 2: //swap endpoints
-                            tmpRoute = RouteMutations.swap(tmpRoute, I, J)
+                            temporaryRoute = RouteMutations.swapArray(temporaryRoute, I, J)
                             break
                         case 3: //push 1 left
-                            tmpRoute = RouteMutations.push(tmpRoute, I, J)
+                            temporaryRoute = RouteMutations.pushArray(temporaryRoute, I, J)
                             break
                     }
                     if (k > 3) {
-                        tmpBreak = rand_breaks() //Half the population of mutants gets new breaks
+                        temporaryBreak = rand_breaks_array() //Half the population of mutants gets new breaks
                     }
-                    popRoute.set(p+k,tmpRoute)
-                    popBreak.set(p+k, tmpBreak)
+                    populationOfRoutes.setRow(p + k, temporaryRoute)
+                    populationOfBreaks.setRow(p + k, temporaryBreak)
                 }
             }
 
         }
 
-        //            tln "Breaks: $optBreak"
-        Long  end = System.currentTimeMillis()
+        Long end = System.currentTimeMillis()
         println "Algorithm complete."
         println "d= ${globalMin}"
         println "Time: ${(end - start) / 1000} seconds"
-        println "Route: $optRoute"
-        splitIntoRoutes(optRoute, optBreak)
+        println "Route: $optimalRoute"
+        println "Breaks: $optimalBreaks"
     }
 
-    List<Double> evaluateMembersOfPopulation() {
-        List<Double> totalDists = []
-        for (Integer p = 0; p < popSize; p++) {
-            List<Integer> pRoute = popRoute.get(p) //route to evaluate
-            List<Integer> pBreak = popBreak.get(p) //break to evaluate
-
-            totalDists[p]=(computeTotalDistanceOfRouteBreak(pRoute, pBreak))
+    double[] evaluateMembersOfPopulation() {
+        double[] totalDists = new double[popSize]
+        for (int p = 0; p < popSize; p++) {
+            totalDists[p] = computeTotalDistanceOfRouteBreakArray(populationOfRoutes.getRow(p), populationOfBreaks.getRow(p))
         }
         return totalDists
     }
 
-
-    static Double computeDistanceOfSingleRoute(List<Integer> route) {
-        Double d = 0
-        d += dmat.get(route.last() - 1, route.first() - 1)
+    static double computeDistanceOfSingleRouteArray(int[] route) {
+        double d = 0
+        d += dmat.get(route[route.length - 1] - 1, route[0] - 1)
         for (int i = 0; i < route.size() - 1; i++) {
-            d += dmat.get(route.get(i) - 1, route.get(i + 1) - 1)
+            d += dmat.get(route[i] - 1, route[i + 1] - 1)
         }
         return d
     }
 
+    static double computeTotalDistanceOfRouteBreakArray(int[] pRoute, int[] pBreak) {
+        int start
+        int end
 
-    static Double  computeTotalDistanceOfRouteBreak(List<Integer> pRoute, List<Integer> pBreak) {
-        List<List<Integer>> routeOfEachSalesmen = splitIntoRoutes(pRoute, pBreak)
         double d = 0
-        return (routeOfEachSalesmen.sum ({List<Integer> aRoute -> computeDistanceOfSingleRoute(aRoute) }) as Double)
+        int[] tmp= new int[pBreak[0]]
+        System.arraycopy(pRoute, 0, tmp, 0, pBreak[0])
+        d += computeDistanceOfSingleRouteArray(tmp)
+
+        for (int p = 0; p < pBreak.length - 1; p++) {
+            start = pBreak[p]
+            end = pBreak[p + 1]
+            tmp= new int[end - start]
+            System.arraycopy(pRoute, start, tmp, 0, end - start )
+            d+= computeDistanceOfSingleRouteArray(tmp)
+        }
+
+        start = pBreak[pBreak.length - 1]
+        end = pRoute.length - 1
+        tmp= new int[end - start]
+        System.arraycopy(pRoute, start, tmp, 0, end - start)
+        d+= computeDistanceOfSingleRouteArray(tmp)
+
+        return d
     }
 
-    static List<List<Integer>> splitIntoRoutes(List<Integer>  pRoute, List<Integer>  pBreak) {
+
+
+    static List<List<Integer>> splitIntoRoutes(List<Integer> pRoute, List<Integer> pBreak) {
         List<List<Integer>> rng = [] //Nested list, each member is a list representing a route
-        rng.add((List<Integer>) pRoute.subList(0,pBreak.get(0)))
+        rng.add((List<Integer>) pRoute.subList(0, pBreak.get(0)))
         for (int p = 0; p < pBreak.size() - 1; p++) {
             Integer start = pBreak[p]
             Integer end = pBreak[p + 1]
-            rng.add((List<Integer>) pRoute.subList(start,end))// as List<Integer>)
+            rng.add((List<Integer>) pRoute.subList(start, end))// as List<Integer>)
         }
-        rng.add( (List<Integer>) pRoute.subList(pBreak.last(),pRoute.size()))
+        rng.add((List<Integer>) pRoute.subList(pBreak.last(), pRoute.size()))
         return rng
     }
 
 
     List<Integer> rand_breaks(double rand = 0.0d) {
-        if (minTour == 1) {
-            List<Integer> tmpBreaks = randperm(n)
-            return  (List<Integer>) tmpBreaks.subList(0,nBreaks).sort()
-        } else {
-            while (rand == 0.0d) {
-                rand = random.nextDouble() //Matlab's rand excludes 0, so we should do so too
-            }
-            int nAdjust = cumProb.findIndexOf { Double it -> it > rand }
-            List<Integer> spaces = (1..nAdjust).collect {(Integer) Math.ceil(random.nextDouble() * nBreaks) }
-
-            List<Integer> adjust2 = []
-            for (i in 0..<nBreaks) {
-                adjust2.add(spaces.findAll({ it == i + 1 }).size())
-            }
-            List<Integer> adjustList = cumsumList(adjust2)
-            return   (List<Integer>) ((1..nBreaks).collect { Integer it -> it * minTour + adjustList.get(it -1)} )
-        }
+        return rand_breaks_array() as List<Integer>
     }
 
+    int[] rand_breaks_array(double rand = 0.0d) {
+        while (rand == 0.0d) {
+            rand = random.nextDouble() //Matlab's rand excludes 0, so we should do so too
+        }
+
+        int nAdjust = -1
+        for (int i = 0; i < cumProb.size(); i++) {
+            if (rand < cumProb.get(i)) {
+                nAdjust = i
+                break
+            }
+        }
+        int[] adjust = new int[nBreaks]
+        for (int i = 0; i < nAdjust; i++) {
+            adjust[random.nextInt(nBreaks)] += 1
+        }
+
+        int[] adjustArray = cumsumIntArray(adjust)
+
+        int[] returnArray = new int[nBreaks]
+        for (int i = 0; i < nBreaks; i++) {
+            returnArray[i] = (i + 1) * minTour + adjustArray[i]
+        }
+        return returnArray
+    }
 
     static BetterSimpleMatrix cumsum(BetterSimpleMatrix matrix) {
         if (matrix.numRows() != 1) {
@@ -218,6 +278,17 @@ class MtspSolverService {
         return ret
     }
 
+    static int[] cumsumIntArray(int[] matrix) {
+        int total = 0;
+        int[] ret = new int[matrix.size()]
+
+        for (int i = 0; i < matrix.size(); i++) {
+            total += matrix[i];
+            ret[i] = total;
+        }
+        return ret
+    }
+
     static def sum(BetterSimpleMatrix matrix) {
         return matrix.elementSum()
     }
@@ -233,8 +304,7 @@ class MtspSolverService {
     }
 
     static List<Double> div(List<Integer> list, Object x) {
-        return list.collect {Integer it -> it / (Number) x }
+        return list.collect { Integer it -> it / (Number) x }
     }
-
 
 }

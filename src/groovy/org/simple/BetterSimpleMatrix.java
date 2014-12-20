@@ -18,6 +18,7 @@ package org.simple;
  */
 
 
+import groovy.transform.CompileStatic;
 import org.ejml.alg.generic.GenericMatrixOps;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.data.ReshapeMatrix64F;
@@ -89,6 +90,7 @@ import java.util.Random;
  *
  * @author Peter Abeles
  */
+@CompileStatic
 public class BetterSimpleMatrix extends SimpleBase<BetterSimpleMatrix> {
 
     /**
