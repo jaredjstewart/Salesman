@@ -95,9 +95,9 @@ class MtspSolverService {
 
                 optimalRoute = populationOfRoutes.getRow(locationOfMinDist)
                 optimalBreaks = populationOfBreaks.getRow(locationOfMinDist)
-//                println "new best route iteration=$i d= ${minDist} }"
-//                println "Route: $optimalRoute"
-//                println "Breaks: $optimalBreaks"
+                println "new best route iteration=$i d= ${minDist} }"
+                println "Route: $optimalRoute"
+                println "Breaks: $optimalBreaks"
             }
 
 
@@ -300,7 +300,7 @@ class MtspSolverService {
     }
 
     static List<Integer> ones(Integer n) {
-        (1..n).toList()
+        (1..n).toList().collect {1}
     }
 
     static List<Double> div(List<Integer> list, Object x) {
